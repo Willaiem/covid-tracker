@@ -22,6 +22,25 @@ const selectAllCounters = () => {
     return counterElsList;
 };
 
+const getAllRegions = async () => {
+    const response = await axios.get("https://covid-api.com/api/regions");
+    return response.data;
+};
+
+const fillFilterWithCountriesData = async () => {
+    const filterByCountriesSelectEl = document.getElementById(
+        "countries-filter"
+    );
+    const { data: countriesData } = await getAllRegions();
+    countriesData.sort((a, b) => (a.name < b.name ? -1 : 1));
+    for (const { iso, name } of countriesData) {
+        const optEl = document.createElement("option");
+        optEl.value = iso;
+        optEl.textContent = name;
+        filterByCountriesSelectEl.append(optEl);
+    }
+};
+
 const initApp = async () => {
     const [
         activeCounter,
@@ -40,6 +59,7 @@ const initApp = async () => {
     confirmedCounter.innerText = confirmed;
     deathsCounter.innerText = deaths;
     recoveredCounter.innerText = recovered;
+    fillFilterWithCountriesData();
 };
 
 initApp();
