@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-    <title>W3.CSS Template</title>
+    <title>COVID Tracker</title>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css" />
@@ -182,8 +182,19 @@
             <div>
                 <label for="countries-filter">Countries:</label>
                 <select name="countries" id="countries-filter">
-                    <option value="total">Total</option>
+                    <option value="">Total</option>
                 </select>
+            </div>
+
+            <div>
+                <label for="date-picker">Date:</label>
+                <input
+                    type="date"
+                    name="date-picker"
+                    id="date-picker"
+                    min="2019-11-01"
+                    max="2020-12-07"
+                />
             </div>
 
             <div class="w3-panel">
