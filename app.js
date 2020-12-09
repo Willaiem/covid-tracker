@@ -1,16 +1,21 @@
 const filterByCountriesSelectEl = document.getElementById("countries-filter");
 const datePickerEl = document.getElementById("date-picker");
 
-const setDatePickerDate = () => {
-    const { day, month, year } = getCurrentDate();
-};
-
-const getCurrentDateFromDatePicker = () => {
-    const currentDate = datePickerEl.value;
+const setMaxDatePickerValue = () => {
+    const { day, month, year } = getActualDate();
+    const convertedDay = convertToDateNum(day);
+    const convertedMonth = convertToDateNum(month);
+    const date = `${year}-${convertedMonth}-${convertedDay}`;
+    datePickerEl.max = date;
+    datePickerEl.value = date;
 };
 
 const correctDateNumbers = (number) => {
     return number <= 10 ? "0" + --number : number;
+};
+
+const convertToDateNum = (number) => {
+    return number <= 10 ? "0" + number : number;
 };
 
 const getAllRegions = async () => {
@@ -19,31 +24,30 @@ const getAllRegions = async () => {
 };
 
 const getCovidTotalReportByDate = async () => {
-    const { day, month, year } = getCurrentDate();
-    const correctDay = correctDateNumbers(day);
+    const date = datePickerEl.value;
 
     const responseCovidReports = await axios.get(
-        `https://covid-api.com/api/reports/total?date=${year}-${month}-${correctDay}`
+        `https://covid-api.com/api/reports/total?date=${date}`
     );
     // console.log("response data: ", responseCovidReports.data.data);
     // console.log("current date: ", day, month, year);
     return responseCovidReports.data.data;
 };
 
-const getCurrentDate = () => {
+const getActualDate = () => {
     const currentDate = new Date();
 
     const year = currentDate.getFullYear();
-    const month = correctDateNumbers(currentDate.getMonth() + 1);
-    const day = correctDateNumbers(currentDate.getDate());
+    const month = currentDate.getMonth() + 1;
+    const day = currentDate.getDate();
     return new Object({ day, month, year });
 };
 
 const getCovidReportByCountryAndDate = async (countryISO) => {
-    const { day, month, year } = getCurrentDate();
+    const date = datePickerEl.value;
 
     const responseCovidReport = await axios.get(
-        `https://covid-api.com/api/reports?date=${year}-${month}-${day}&iso=${countryISO}`
+        `https://covid-api.com/api/reports?date=${date}&iso=${countryISO}`
     );
     console.log(responseCovidReport);
     return responseCovidReport.data.data;
@@ -68,19 +72,20 @@ const fillFilterWithCountriesData = async () => {
         optEl.textContent = name;
         filterByCountriesSelectEl.append(optEl);
     }
-    filterByCountriesSelectEl.addEventListener("click", (event) => {
-        const selectedCountryISO = event.target.value;
-        console.log(selectedCountryISO);
-        const {
-            active,
-            confirmed,
-            deaths,
-            recovered,
-        } = getCovidReportByCountryAndDate(selectedCountryISO);
-        console.log(active);
-        updateCounters(active, confirmed, deaths, recovered);
-    });
 };
+
+filterByCountriesSelectEl.addEventListener("click", (event) => {
+    const selectedCountryISO = event.target.value;
+    console.log(selectedCountryISO);
+    const {
+        active,
+        confirmed,
+        deaths,
+        recovered,
+    } = getCovidReportByCountryAndDate(selectedCountryISO);
+    console.log(active);
+    updateCounters(active, confirmed, deaths, recovered);
+});
 
 const updateCounters = (active, confirmed, deaths, recovered) => {
     const [
@@ -96,6 +101,7 @@ const updateCounters = (active, confirmed, deaths, recovered) => {
 };
 
 const initApp = async () => {
+    setMaxDatePickerValue();
     const {
         active,
         confirmed,
