@@ -2,7 +2,7 @@ const filterByCountriesSelectEl = document.getElementById("countries-filter");
 const datePickerEl = document.getElementById("date-picker");
 
 const setMaxDatePickerValue = () => {
-    const { day, month, year } = getActualDate();
+    const { day, month, year } = getCurrentDate();
     const convertedDay = convertToDateNum(day);
     const convertedMonth = convertToDateNum(month);
     const date = `${year}-${convertedMonth}-${convertedDay}`;
@@ -34,7 +34,7 @@ const getCovidTotalReportByDate = async () => {
     return responseCovidReports.data.data;
 };
 
-const getActualDate = () => {
+const getCurrentDate = () => {
     const currentDate = new Date();
 
     const year = currentDate.getFullYear();
