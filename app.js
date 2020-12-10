@@ -24,12 +24,13 @@ const getAllRegions = async () => {
 };
 
 const getCovidTotalReportByDate = async () => {
-    const { day, month, year } = getCurrentDate();
-    const convertedDay = convertToDateNum(day - 1);
-    const convertedMonth = convertToDateNum(month);
+    // const { day, month, year } = getCurrentDate();
+    // const convertedDay = convertToDateNum(day - 1);
+    // const convertedMonth = convertToDateNum(month);
+    const date = datePickerEl.value;
 
     const responseCovidReports = await axios.get(
-        `https://covid-api.com/api/reports/total?date=${year}-${convertedMonth}-${convertedDay}`
+        `https://covid-api.com/api/reports/total?date=${date}`
     );
     // console.log("response data: ", responseCovidReports.data.data);
     // console.log("current date: ", day, month, year);
@@ -51,6 +52,7 @@ const getCovidReportByCountryAndDate = async (countryISO) => {
     const responseCovidReport = await axios.get(
         `https://covid-api.com/api/reports?date=${date}&iso=${countryISO}`
     );
+    console.log(responseCovidReport);
     return responseCovidReport.data.data[0];
 };
 
