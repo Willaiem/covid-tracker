@@ -3,7 +3,7 @@ const datePickerEl = document.getElementById("date-picker");
 
 const setMaxDatePickerValue = () => {
     const { day, month, year } = getCurrentDate();
-    const convertedDay = convertToDateNum(day);
+    const convertedDay = correctDateNumbers(day);
     const convertedMonth = convertToDateNum(month);
     const date = `${year}-${convertedMonth}-${convertedDay}`;
     datePickerEl.max = date;
@@ -24,10 +24,12 @@ const getAllRegions = async () => {
 };
 
 const getCovidTotalReportByDate = async () => {
-    const date = datePickerEl.value;
+    const { day, month, year } = getCurrentDate();
+    const convertedDay = convertToDateNum(day - 1);
+    const convertedMonth = convertToDateNum(month);
 
     const responseCovidReports = await axios.get(
-        `https://covid-api.com/api/reports/total?date=${date}`
+        `https://covid-api.com/api/reports/total?date=${year}-${convertedMonth}-${convertedDay}`
     );
     // console.log("response data: ", responseCovidReports.data.data);
     // console.log("current date: ", day, month, year);
@@ -49,8 +51,7 @@ const getCovidReportByCountryAndDate = async (countryISO) => {
     const responseCovidReport = await axios.get(
         `https://covid-api.com/api/reports?date=${date}&iso=${countryISO}`
     );
-    console.log(responseCovidReport);
-    return responseCovidReport.data.data;
+    return responseCovidReport.data.data[0];
 };
 
 const selectAllCounters = () => {
@@ -74,7 +75,7 @@ const fillFilterWithCountriesData = async () => {
     }
 };
 
-filterByCountriesSelectEl.addEventListener("click", (event) => {
+filterByCountriesSelectEl.addEventListener("click", async (event) => {
     const selectedCountryISO = event.target.value;
     console.log(selectedCountryISO);
     const {
@@ -82,7 +83,7 @@ filterByCountriesSelectEl.addEventListener("click", (event) => {
         confirmed,
         deaths,
         recovered,
-    } = getCovidReportByCountryAndDate(selectedCountryISO);
+    } = await getCovidReportByCountryAndDate(selectedCountryISO);
     console.log(active);
     updateCounters(active, confirmed, deaths, recovered);
 });
