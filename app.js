@@ -3,7 +3,7 @@ const datePickerEl = document.getElementById("date-picker");
 
 const setMaxDatePickerValue = () => {
     const { day, month, year } = getCurrentDate();
-    const convertedDay = correctDateNumbers(day);
+    const convertedDay = correctDateNumbers(day - 1);
     const convertedMonth = convertToDateNum(month);
     const date = `${year}-${convertedMonth}-${convertedDay}`;
     datePickerEl.max = date;
