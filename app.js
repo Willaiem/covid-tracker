@@ -23,20 +23,6 @@ const getAllRegions = async () => {
     return response.data;
 };
 
-const getCovidTotalReportByDate = async () => {
-    // const { day, month, year } = getCurrentDate();
-    // const convertedDay = convertToDateNum(day - 1);
-    // const convertedMonth = convertToDateNum(month);
-    const date = datePickerEl.value;
-
-    const responseCovidReports = await axios.get(
-        `https://covid-api.com/api/reports/total?date=${date}`
-    );
-    // console.log("response data: ", responseCovidReports.data.data);
-    // console.log("current date: ", day, month, year);
-    return responseCovidReports.data.data;
-};
-
 const getCurrentDate = () => {
     const currentDate = new Date();
 
@@ -46,14 +32,20 @@ const getCurrentDate = () => {
     return new Object({ day, month, year });
 };
 
-const getCovidReportByCountryAndDate = async (countryISO) => {
+const getCovidReport = async (countryISO = "total") => {
     const date = datePickerEl.value;
 
-    const responseCovidReport = await axios.get(
-        `https://covid-api.com/api/reports?date=${date}&iso=${countryISO}`
+    if (countryISO !== "total") {
+        const responseCovidReport = await axios.get(
+            `https://covid-api.com/api/reports?date=${date}&iso=${countryISO}`
+        );
+        console.log(responseCovidReport);
+        return responseCovidReport.data.data[0];
+    }
+    const responseCovidReports = await axios.get(
+        `https://covid-api.com/api/reports/total?date=${date}`
     );
-    console.log(responseCovidReport);
-    return responseCovidReport.data.data[0];
+    return responseCovidReports.data.data;
 };
 
 const selectAllCounters = () => {
@@ -80,12 +72,9 @@ const fillFilterWithCountriesData = async () => {
 filterByCountriesSelectEl.addEventListener("click", async (event) => {
     const selectedCountryISO = event.target.value;
     console.log(selectedCountryISO);
-    const {
-        active,
-        confirmed,
-        deaths,
-        recovered,
-    } = await getCovidReportByCountryAndDate(selectedCountryISO);
+    const { active, confirmed, deaths, recovered } = await getCovidReport(
+        selectedCountryISO
+    );
     console.log(active);
     updateCounters(active, confirmed, deaths, recovered);
 });
@@ -111,7 +100,7 @@ const initApp = async () => {
         date,
         deaths,
         recovered,
-    } = await getCovidTotalReportByDate();
+    } = await getCovidReport();
     updateCounters(active, confirmed, deaths, recovered);
     fillFilterWithCountriesData();
 };
