@@ -79,6 +79,14 @@ filterByCountriesSelectEl.addEventListener("click", async (event) => {
     updateCounters(active, confirmed, deaths, recovered);
 });
 
+datePickerEl.addEventListener("change", async () => {
+    const selectedCountryISO = filterByCountriesSelectEl.value;
+    const { active, confirmed, deaths, recovered } = await getCovidReport(
+        selectedCountryISO
+    );
+    updateCounters(active, confirmed, deaths, recovered);
+});
+
 const updateCounters = (active, confirmed, deaths, recovered) => {
     const [
         activeCounter,
