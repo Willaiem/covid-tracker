@@ -1,3 +1,5 @@
+// import axios from "axios";
+
 const filterByCountriesSelectEl = document.getElementById("countries-filter");
 const datePickerEl = document.getElementById("date-picker");
 
@@ -40,6 +42,14 @@ const getCovidReport = async (countryISO = "total") => {
             `https://covid-api.com/api/reports?date=${date}&iso=${countryISO}`
         );
         console.log(responseCovidReport);
+        if (!responseCovidReport.data.data[0]) {
+            return {
+                active: "Not available",
+                confirmed: "Not available",
+                deaths: "Not available",
+                recovered: "Not available",
+            };
+        }
         return responseCovidReport.data.data[0];
     }
     const responseCovidReports = await axios.get(
@@ -102,13 +112,7 @@ const updateCounters = (active, confirmed, deaths, recovered) => {
 
 const initApp = async () => {
     setMaxDatePickerValue();
-    const {
-        active,
-        confirmed,
-        date,
-        deaths,
-        recovered,
-    } = await getCovidReport();
+    const { active, confirmed, deaths, recovered } = await getCovidReport();
     updateCounters(active, confirmed, deaths, recovered);
     fillFilterWithCountriesData();
 };
