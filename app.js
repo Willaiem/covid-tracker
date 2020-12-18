@@ -35,27 +35,34 @@ const getCurrentDate = () => {
 };
 
 const getCovidReport = async (countryISO = "total") => {
+    const isResponseValid = (response) => {
+        const notAvailableDateObject = {
+            active: "Not available",
+            confirmed: "Not available",
+            deaths: "Not available",
+            recovered: "Not available",
+        };
+        if (Array.isArray(response) || typeof response === "undefined") {
+            return notAvailableDateObject;
+        }
+        return response;
+    };
+
     const date = datePickerEl.value;
 
     if (countryISO !== "total") {
         const responseCovidReport = await axios.get(
             `https://covid-api.com/api/reports?date=${date}&iso=${countryISO}`
         );
+        const response = isResponseValid(responseCovidReport.data.data[0]);
         console.log(responseCovidReport);
-        if (!responseCovidReport.data.data[0]) {
-            return {
-                active: "Not available",
-                confirmed: "Not available",
-                deaths: "Not available",
-                recovered: "Not available",
-            };
-        }
-        return responseCovidReport.data.data[0];
+        return response;
     }
     const responseCovidReports = await axios.get(
         `https://covid-api.com/api/reports/total?date=${date}`
     );
-    return responseCovidReports.data.data;
+    const response = isResponseValid(responseCovidReports.data.data);
+    return response;
 };
 
 const selectAllCounters = () => {
@@ -79,7 +86,7 @@ const fillFilterWithCountriesData = async () => {
     }
 };
 
-filterByCountriesSelectEl.addEventListener("click", async (event) => {
+filterByCountriesSelectEl.addEventListener("change", async (event) => {
     const selectedCountryISO = event.target.value;
     console.log(selectedCountryISO);
     const { active, confirmed, deaths, recovered } = await getCovidReport(
