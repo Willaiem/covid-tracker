@@ -1,16 +1,23 @@
 import axios from "axios";
 
 interface IResponse {
-    active: number;
-    deaths: number;
-    confirmed: number;
-    recovered: number;
+    active: string | number;
+    deaths: string | number;
+    confirmed: string | number;
+    recovered: string | number;
 }
 
 interface ICountriesData {
     ISO: string;
     name: string;
 }
+
+type UpdateCountries = ({
+    active,
+    confirmed,
+    deaths,
+    recovered,
+}: IResponse) => void;
 
 const filterByCountriesSelectEl = document.getElementById(
     "countries-filter"
@@ -55,8 +62,8 @@ const getCurrentDate = () => {
 };
 
 const getCovidReport = async (countryISO = "total") => {
-    const isResponseValid = (response: IResponse) => {
-        const notAvailableDateObject = {
+    const responseValidator = (response: IResponse) => {
+        const notAvailableDateObject: IResponse = {
             active: "Not available",
             confirmed: "Not available",
             deaths: "Not available",
@@ -74,14 +81,14 @@ const getCovidReport = async (countryISO = "total") => {
         const responseCovidReport = await axios.get(
             `https://covid-api.com/api/reports?date=${date}&iso=${countryISO}`
         );
-        const response = isResponseValid(responseCovidReport.data.data[0]);
+        const response = responseValidator(responseCovidReport.data.data[0]);
         console.log(responseCovidReport);
         return response as IResponse;
     }
     const responseCovidReports = await axios.get(
         `https://covid-api.com/api/reports/total?date=${date}`
     );
-    const response = isResponseValid(responseCovidReports.data.data);
+    const response = responseValidator(responseCovidReports.data.data);
     return response as IResponse;
 };
 
@@ -118,27 +125,23 @@ filterByCountriesSelectEl.addEventListener("change", async (event) => {
     const optionEl = event.target as HTMLOptionElement;
     const selectedCountryISO = optionEl.value;
     console.log(selectedCountryISO);
-    const { active, confirmed, deaths, recovered } = await getCovidReport(
-        selectedCountryISO
-    );
-    console.log(active);
-    updateCounters(active, confirmed, deaths, recovered);
+    const response = await getCovidReport(selectedCountryISO);
+    console.log(response.active);
+    updateCounters(response);
 });
 
 datePickerEl.addEventListener("change", async () => {
     const selectedCountryISO = filterByCountriesSelectEl.value;
-    const { active, confirmed, deaths, recovered } = await getCovidReport(
-        selectedCountryISO
-    );
-    updateCounters(active, confirmed, deaths, recovered);
+    const response = await getCovidReport(selectedCountryISO);
+    updateCounters(response);
 });
 
-const updateCounters = (
-    active: string | number,
-    confirmed: string | number,
-    deaths: string | number,
-    recovered: string | number
-) => {
+const updateCounters: UpdateCountries = ({
+    active,
+    confirmed,
+    deaths,
+    recovered,
+}) => {
     const [
         activeCounter,
         confirmedCounter,
@@ -153,8 +156,8 @@ const updateCounters = (
 
 const initApp = async () => {
     setMaxDatePickerValue();
-    const { active, confirmed, deaths, recovered } = await getCovidReport();
-    updateCounters(active, confirmed, deaths, recovered);
+    const response = await getCovidReport();
+    updateCounters(response);
     fillFilterWithCountriesData();
 };
 

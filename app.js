@@ -76,11 +76,11 @@ var getCurrentDate = function () {
 var getCovidReport = function (countryISO) {
     if (countryISO === void 0) { countryISO = "total"; }
     return __awaiter(void 0, void 0, void 0, function () {
-        var isResponseValid, date, responseCovidReport, response_1, responseCovidReports, response;
+        var responseValidator, date, responseCovidReport, response_1, responseCovidReports, response;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    isResponseValid = function (response) {
+                    responseValidator = function (response) {
                         var notAvailableDateObject = {
                             active: "Not available",
                             confirmed: "Not available",
@@ -97,13 +97,13 @@ var getCovidReport = function (countryISO) {
                     return [4 /*yield*/, axios.get("https://covid-api.com/api/reports?date=" + date + "&iso=" + countryISO)];
                 case 1:
                     responseCovidReport = _a.sent();
-                    response_1 = isResponseValid(responseCovidReport.data.data[0]);
+                    response_1 = responseValidator(responseCovidReport.data.data[0]);
                     console.log(responseCovidReport);
                     return [2 /*return*/, response_1];
                 case 2: return [4 /*yield*/, axios.get("https://covid-api.com/api/reports/total?date=" + date)];
                 case 3:
                     responseCovidReports = _a.sent();
-                    response = isResponseValid(responseCovidReports.data.data);
+                    response = responseValidator(responseCovidReports.data.data);
                     return [2 /*return*/, response];
             }
         });
@@ -146,53 +146,54 @@ var fillFilterWithCountriesData = function () { return __awaiter(void 0, void 0,
     });
 }); };
 filterByCountriesSelectEl.addEventListener("change", function (event) { return __awaiter(void 0, void 0, void 0, function () {
-    var optionEl, selectedCountryISO, _a, active, confirmed, deaths, recovered;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
+    var optionEl, selectedCountryISO, response;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
             case 0:
                 optionEl = event.target;
                 selectedCountryISO = optionEl.value;
                 console.log(selectedCountryISO);
                 return [4 /*yield*/, getCovidReport(selectedCountryISO)];
             case 1:
-                _a = _b.sent(), active = _a.active, confirmed = _a.confirmed, deaths = _a.deaths, recovered = _a.recovered;
-                console.log(active);
-                updateCounters(active, confirmed, deaths, recovered);
+                response = _a.sent();
+                console.log(response.active);
+                updateCounters(response);
                 return [2 /*return*/];
         }
     });
 }); });
 datePickerEl.addEventListener("change", function () { return __awaiter(void 0, void 0, void 0, function () {
-    var selectedCountryISO, _a, active, confirmed, deaths, recovered;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
+    var selectedCountryISO, response;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
             case 0:
                 selectedCountryISO = filterByCountriesSelectEl.value;
                 return [4 /*yield*/, getCovidReport(selectedCountryISO)];
             case 1:
-                _a = _b.sent(), active = _a.active, confirmed = _a.confirmed, deaths = _a.deaths, recovered = _a.recovered;
-                updateCounters(active, confirmed, deaths, recovered);
+                response = _a.sent();
+                updateCounters(response);
                 return [2 /*return*/];
         }
     });
 }); });
-var updateCounters = function (active, confirmed, deaths, recovered) {
-    var _a = selectAllCounters(), activeCounter = _a[0], confirmedCounter = _a[1], deathsCounter = _a[2], recoveredCounter = _a[3];
+var updateCounters = function (_a) {
+    var active = _a.active, confirmed = _a.confirmed, deaths = _a.deaths, recovered = _a.recovered;
+    var _b = selectAllCounters(), activeCounter = _b[0], confirmedCounter = _b[1], deathsCounter = _b[2], recoveredCounter = _b[3];
     activeCounter.innerText = convertToString(active);
     confirmedCounter.innerText = convertToString(confirmed);
     deathsCounter.innerText = convertToString(deaths);
     recoveredCounter.innerText = convertToString(recovered);
 };
 var initApp = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, active, confirmed, deaths, recovered;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
+    var response;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
             case 0:
                 setMaxDatePickerValue();
                 return [4 /*yield*/, getCovidReport()];
             case 1:
-                _a = _b.sent(), active = _a.active, confirmed = _a.confirmed, deaths = _a.deaths, recovered = _a.recovered;
-                updateCounters(active, confirmed, deaths, recovered);
+                response = _a.sent();
+                updateCounters(response);
                 fillFilterWithCountriesData();
                 return [2 /*return*/];
         }
