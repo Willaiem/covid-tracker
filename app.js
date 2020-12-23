@@ -45,6 +45,9 @@ var setMaxDatePickerValue = function () {
     datePickerEl.max = date;
     datePickerEl.value = date;
 };
+var convertToString = function (value) {
+    return value + "";
+};
 var correctDateNumbers = function (number) {
     return number <= 10 ? "0" + --number : number;
 };
@@ -109,11 +112,16 @@ var getCovidReport = function (countryISO) {
 var selectAllCounters = function () {
     var counterElsList = [];
     var quartersElements = document.querySelectorAll(".w3-quarter");
-    for (var _i = 0, _a = quartersElements; _i < _a.length; _i++) {
-        var quarter = _a[_i];
-        var counterEl = quarter.children[0].children[1];
-        counterElsList.push(counterEl);
-    }
+    // for (const quarter of quartersElements as any) {
+    //     const counterEl = quarter.children[0].children[1];
+    //     counterElsList.push(counterEl);
+    // }
+    quartersElements.forEach(function (quarter) {
+        var containerEl = quarter.children[0];
+        var counterRightDivEl = containerEl.children[1];
+        var h1CounterEl = counterRightDivEl.children[0];
+        counterElsList.push(h1CounterEl);
+    });
     return counterElsList;
 };
 var fillFilterWithCountriesData = function () { return __awaiter(void 0, void 0, void 0, function () {
@@ -170,10 +178,10 @@ datePickerEl.addEventListener("change", function () { return __awaiter(void 0, v
 }); });
 var updateCounters = function (active, confirmed, deaths, recovered) {
     var _a = selectAllCounters(), activeCounter = _a[0], confirmedCounter = _a[1], deathsCounter = _a[2], recoveredCounter = _a[3];
-    activeCounter.innerText = active;
-    confirmedCounter.innerText = confirmed;
-    deathsCounter.innerText = deaths;
-    recoveredCounter.innerText = recovered;
+    activeCounter.innerText = convertToString(active);
+    confirmedCounter.innerText = convertToString(confirmed);
+    deathsCounter.innerText = convertToString(deaths);
+    recoveredCounter.innerText = convertToString(recovered);
 };
 var initApp = function () { return __awaiter(void 0, void 0, void 0, function () {
     var _a, active, confirmed, deaths, recovered;

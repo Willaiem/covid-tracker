@@ -26,6 +26,10 @@ const setMaxDatePickerValue = () => {
     datePickerEl.value = date;
 };
 
+const convertToString = (value: unknown) => {
+    return value + "";
+};
+
 const correctDateNumbers = (number: number) => {
     return number <= 10 ? "0" + --number : number;
 };
@@ -82,12 +86,18 @@ const getCovidReport = async (countryISO = "total") => {
 };
 
 const selectAllCounters = () => {
-    const counterElsList = [];
+    const counterElsList: HTMLHeadingElement[] = [];
     const quartersElements = document.querySelectorAll(".w3-quarter");
-    for (const quarter of quartersElements as any) {
-        const counterEl = quarter.children[0].children[1];
-        counterElsList.push(counterEl);
-    }
+    // for (const quarter of quartersElements as any) {
+    //     const counterEl = quarter.children[0].children[1];
+    //     counterElsList.push(counterEl);
+    // }
+    quartersElements.forEach((quarter) => {
+        const containerEl = quarter.children[0];
+        const counterRightDivEl = containerEl.children[1];
+        const h1CounterEl = counterRightDivEl.children[0];
+        counterElsList.push(h1CounterEl as HTMLHeadingElement);
+    });
     return counterElsList;
 };
 
@@ -135,10 +145,10 @@ const updateCounters = (
         deathsCounter,
         recoveredCounter,
     ] = selectAllCounters();
-    activeCounter.innerText = active;
-    confirmedCounter.innerText = confirmed;
-    deathsCounter.innerText = deaths;
-    recoveredCounter.innerText = recovered;
+    activeCounter.innerText = convertToString(active);
+    confirmedCounter.innerText = convertToString(confirmed);
+    deathsCounter.innerText = convertToString(deaths);
+    recoveredCounter.innerText = convertToString(recovered);
 };
 
 const initApp = async () => {
