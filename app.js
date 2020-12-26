@@ -1,3 +1,4 @@
+"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -34,7 +35,11 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-import axios from "axios";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var axios_1 = __importDefault(require("axios"));
 var filterByCountriesSelectEl = document.getElementById("countries-filter");
 var datePickerEl = document.getElementById("date-picker");
 var setMaxDatePickerValue = function () {
@@ -58,10 +63,10 @@ var getAllRegions = function () { return __awaiter(void 0, void 0, void 0, funct
     var response;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, axios.get("https://covid-api.com/api/regions")];
+            case 0: return [4 /*yield*/, axios_1.default.get("https://covid-api.com/api/regions")];
             case 1:
                 response = _a.sent();
-                return [2 /*return*/, response.data];
+                return [2 /*return*/, response.data.data];
         }
     });
 }); };
@@ -94,13 +99,13 @@ var getCovidReport = function (countryISO) {
                     };
                     date = datePickerEl.value;
                     if (!(countryISO !== "total")) return [3 /*break*/, 2];
-                    return [4 /*yield*/, axios.get("https://covid-api.com/api/reports?date=" + date + "&iso=" + countryISO)];
+                    return [4 /*yield*/, axios_1.default.get("https://covid-api.com/api/reports?date=" + date + "&iso=" + countryISO)];
                 case 1:
                     responseCovidReport = _a.sent();
                     response_1 = responseValidator(responseCovidReport.data.data[0]);
                     console.log(responseCovidReport);
                     return [2 /*return*/, response_1];
-                case 2: return [4 /*yield*/, axios.get("https://covid-api.com/api/reports/total?date=" + date)];
+                case 2: return [4 /*yield*/, axios_1.default.get("https://covid-api.com/api/reports/total?date=" + date)];
                 case 3:
                     responseCovidReports = _a.sent();
                     response = responseValidator(responseCovidReports.data.data);
@@ -125,19 +130,19 @@ var selectAllCounters = function () {
     return counterElsList;
 };
 var fillFilterWithCountriesData = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var countriesData, _i, _a, _b, ISO, name_1, optEl;
-    return __generator(this, function (_c) {
-        switch (_c.label) {
+    var countriesData, _i, countriesData_1, _a, iso, name_1, optEl;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
             case 0: return [4 /*yield*/, getAllRegions()];
             case 1:
-                countriesData = (_c.sent()).data;
+                countriesData = _b.sent();
                 countriesData.sort(function (a, b) {
                     return a.name < b.name ? -1 : 1;
                 });
-                for (_i = 0, _a = countriesData; _i < _a.length; _i++) {
-                    _b = _a[_i], ISO = _b.ISO, name_1 = _b.name;
+                for (_i = 0, countriesData_1 = countriesData; _i < countriesData_1.length; _i++) {
+                    _a = countriesData_1[_i], iso = _a.iso, name_1 = _a.name;
                     optEl = document.createElement("option");
-                    optEl.value = ISO;
+                    optEl.value = iso;
                     optEl.textContent = name_1;
                     filterByCountriesSelectEl.append(optEl);
                 }
@@ -200,3 +205,4 @@ var initApp = function () { return __awaiter(void 0, void 0, void 0, function ()
     });
 }); };
 initApp();
+//# sourceMappingURL=app.js.map

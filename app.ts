@@ -1,5 +1,4 @@
 import axios from "axios";
-
 interface IResponse {
     active: string | number;
     deaths: string | number;
@@ -8,7 +7,7 @@ interface IResponse {
 }
 
 interface ICountriesData {
-    ISO: string;
+    iso: string;
     name: string;
 }
 
@@ -47,7 +46,7 @@ const convertToDateNum = (number: number) => {
 
 const getAllRegions = async () => {
     const response = await axios.get("https://covid-api.com/api/regions");
-    return response.data;
+    return response.data.data as ICountriesData[];
 };
 
 const getCurrentDate = () => {
@@ -109,13 +108,14 @@ const selectAllCounters = () => {
 };
 
 const fillFilterWithCountriesData = async () => {
-    const { data: countriesData } = await getAllRegions();
+    const countriesData = await getAllRegions();
     countriesData.sort((a: ICountriesData, b: ICountriesData) =>
         a.name < b.name ? -1 : 1
     );
-    for (const { ISO, name } of countriesData as ICountriesData[]) {
+
+    for (const { iso, name } of countriesData) {
         const optEl = document.createElement("option");
-        optEl.value = ISO;
+        optEl.value = iso;
         optEl.textContent = name;
         filterByCountriesSelectEl.append(optEl);
     }

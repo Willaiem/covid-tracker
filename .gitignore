@@ -2,3 +2,4 @@ node_modules
 .vscode/launch.json
 .cache
 dist
+app.js.map
